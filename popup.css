@@ -1,0 +1,29 @@
+#container {
+    width: 126px;
+    height: 41px;
+    white-space: nowrap;
+    overflow-x: auto;
+}
+
+.inside {
+    display: inline-block;
+}
+
+button {
+    width: 30px;
+    margin: 10px;
+    outline: none;
+}
+
+/* #VolumeUp {
+    width: 30px;
+    margin: 10px;
+    outline: none;
+}
+
+#VolumeDown {
+    width: 30px;
+    margin: 10px;
+    outline: none;
+} */
+
