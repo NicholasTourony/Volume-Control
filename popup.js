@@ -1,142 +1,48 @@
-console.log("popup is running");
+
+// volume up and down buttons to add event listener
 let volumeDown = document.getElementById("VolumeDown");
 let volumeUp = document.getElementById("VolumeUp");
 
+// set the text of the popup to the current volume
 chrome.storage.sync.get("volume", (data) => {
     document.getElementById("VolumeText").textContent = data.volume;
 });
 
+// lower the volume by 10
 volumeDown.addEventListener("click", async () => {
     console.log('lowering volume');
-    chrome.storage.sync.get("volume", (data) => {
-        volume = data.volume - 10;
-        chrome.storage.sync.set({volume}, function() {
-            console.log("Volume set to: " + volume);
-        });
-        document.getElementById("VolumeText").textContent = volume;
-     });
-     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-     
-     if (!hasSetUpVolume)
-     {
-        chrome.scripting.executeScript({target: { tabId: tab.id },
-            func: setVolume,
-           });
-           hasSetUpVolume = true;
-     }
-     else {
-        chrome.scripting.executeScript({target: { tabId: tab.id },
-            func: setVolume,
-           });
-     }
-     
+    changeVolume(-10);
+
 });
 
+// raise the volume by 10
 volumeUp.addEventListener("click", async () => {
     console.log('increasing volume');
-    chrome.storage.sync.get("volume", (data) => {
-        volume = data.volume + 10;
-        chrome.storage.sync.set({volume}, function() {
-            console.log("Volume set to: " + volume);
-        });
-        document.getElementById("VolumeText").textContent = volume; });
-        let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  
-        // let audioContext = new AudioContext();
-        chrome.scripting.executeScript({target: { tabId: tab.id },
-        func: setVolume, 
-    });
+    changeVolume(10);
 });
 
-let source = null
-
-function setVolume() {
-    // $('#ytp-volume-panel').attr('aria-valuenow', "50");
-    // console.log("Test");
-        // console.log($('#ytp-volume-panel').attr('aria-valuenow'));
-    // let volumeNow = document.getElementsByClassName("ytp-volume-panel")[0];
-    // console.log(volumeNow);
-    // console.log(volumeNow.ariaValueNow);
-    // volumeNow.ariaValueNow = 50;
-    // volumeNow.ariaValueNow = "50";
-    // // volumeNow.setAttribute("aria-valuenow", "50");
-    // document.body.style.backgroundColor = "#eb9834";
-    // let volumePanel = document.querySelector('ytp-volume-panel');
-    // console.log(volumePanel);
-    // volumePanel.ariaValueNow = "1";
-    chrome.storage.sync.get("audioObjects", (data) => {
-
-        if (data.audioObjects[0] === null)
+// take the change in volume and calculate a new volume
+// store this volume and tell the content script to change the volume
+function changeVolume(volume)
+{
+    chrome.storage.sync.get("volume", (data) => {
+        volume = data.volume + volume;
+        if (volume < 0)
         {
-        let audioContext = new AudioContext();
-        let video = document.querySelector('video');
-
-        let source = audioContext.createMediaElementSource(video);
-        
-        let gainNode = audioContext.createGain();
-        console.log("Created Gain Node");
-        gainNode.gain.value = gainNode.gain.value + 1.5;
-        console.log("Upping gain");
-        source.connect(gainNode);
-    
-        console.log("connected source");
-        gainNode.connect(audioContext.destination);
-        console.log("connected gain to destination");
-        data.audioObjects[0] = source;
-        console.log("setting first object to source");
-        data.audioObjects[1] = audioContext;
-        console.log("setting second object to source");
-
-        const audioObjects = data.audioObjects;
-        console.log(audioObjects[1]);
-
-        chrome.storage.sync.set({audioObjects}, function() {
-            console.log("set " + audioObjects);
-        });
-
+            volume = 0;
         }
-        else
-        {
-        console.log(data.audioObjects[1]);
-        let gainNode = data.audioObjects[1].createGain();
-        console.log("Created Gain Node");
-        gainNode.gain.value = gainNode.gain.value + 1.5;
-        console.log("Upping gain");
-        data.audioObjects[0].connect(gainNode);
-    
-        gainNode.connect(data.audioObjects[1].destination);
-        }
+        chrome.storage.sync.set({volume}, function() {
+        console.log("Volume set to: " + volume);
+    });
+    document.getElementById("VolumeText").textContent = volume; 
+
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            const activeTab = tabs[0];
+
+        chrome.tabs.sendMessage(activeTab.id, {
+            message: 'set_volume_level',
+            value: volume / 100.0
+          });
         });
-    
-        // let audioContext = new AudioContext();
-        // let video = document.querySelector('video');
-
-        // let source = audioContext.createMediaElementSource(video);
-        
-        // let gainNode = audioContext.createGain();
-        // console.log("Created Gain Node");
-    
-
-    
-    
-    // gainNode.gain.value = gainNode.gain.value + 1.5;
-    // console.log("Upping gain");
-    // source.connect(gainNode);
-
-    // gainNode.connect(audioContext.destination);
+    });
 }
-
-function setVolumeAgain() {
-    gainNode.gain.value = 5;
-    source.connect(gainNode);
-    gainNode.connect(audioContext.destination)
-}
-
-
-// function setUpAudio() {
-//     let audioContext = new (window.AudioContext || window.webkitAudioContext)();
-//     let video = document.querySelector('video');
-//     let source = audioContext.createMediaElementSource(video);
-    
-//     let gainNode = audioContext.createGain();
-// }
