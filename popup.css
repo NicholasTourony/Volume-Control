@@ -4,6 +4,12 @@
     white-space: nowrap;
     overflow-x: auto;
 }
+#muteButton {
+    text-align: center;
+}
+#mute {
+    width: 75px;
+}
 
 .inside {
     display: inline-block;

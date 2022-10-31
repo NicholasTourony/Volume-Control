@@ -9,7 +9,16 @@
     "permissions": ["storage", "activeTab", "scripting"],
     "action": {
         "default_popup": "popup.html",
-        "default_icon": "images/test.png"
+        "default_icon": {
+          "16": "images/volumeicon.png",
+          "48": "images/volumeicon.png",
+          "128": "images/volumeicon.png"
+        }
+    },
+    "icons": {
+        "16": "images/volumeicon.png",
+        "48": "images/volumeicon.png",
+        "128": "images/volumeicon.png"
     },
     "content_scripts": [
         {
