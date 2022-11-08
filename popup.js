@@ -4,7 +4,6 @@ let volumeDown = document.getElementById("VolumeDown");
 let volumeUp = document.getElementById("VolumeUp");
 let mute = document.getElementById("mute");
 let muted = false;
-let map = new Map();
 
 
 // set the text of the popup to the current volume
@@ -17,7 +16,6 @@ volumeDown.addEventListener("click", async () => {
 
 });
 
-
 // raise the volume by 10
 volumeUp.addEventListener("click", async () => {
     console.log('increasing volume');
@@ -29,6 +27,7 @@ mute.addEventListener("click", async () => {
     muteVolume();
 });
 
+// get the current tab volume when the popup is opened
 chrome.runtime.onMessage.addListener(
     function(request) {
       if(request.message === "getTabVolume" && typeof request.value === 'number') {
@@ -37,6 +36,8 @@ chrome.runtime.onMessage.addListener(
       }
     });
 
+// mute the volume of the active tab by setting volume to 0
+// or get what the current volume should be if it is already muted
 function muteVolume()
 {
     if (!muted)

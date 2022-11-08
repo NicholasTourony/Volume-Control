@@ -6,6 +6,6 @@ This extension was made in visual studio code on a laptop with a i7-9750h, 16gb 
 
 The extension consists of 4 main files
 popup.html is a popup window that displays when the user clicks on the chrome extension. This file contains the buttons and the text displaying the current volume.
-background.js uses Chrome's storage to storage a volume value.
-popup.js controls how clicking the buttons affects the volume. When a button is clicked the new volume is calculated and storaged to chrome. This value is then passed to the content.js script to actually change the volume.
-content.js finds the video element on the page and changes the volume.
+background.js stores the active tab and uses a map to keep volumes for each tab.
+popup.js controls how clicking the buttons affects the volume. When a button is clicked the new volume is calculated and storaged to the background.js map. This value is then passed to the content.js script to actually change the volume.
+content.js finds the video element on the page and changes the volume by changing the gain.
