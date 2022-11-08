@@ -1,14 +1,14 @@
-
+chrome.runtime.sendMessage({popupOpen: true});
 // volume up and down buttons to add event listener
 let volumeDown = document.getElementById("VolumeDown");
 let volumeUp = document.getElementById("VolumeUp");
 let mute = document.getElementById("mute");
 let muted = false;
+let map = new Map();
+
 
 // set the text of the popup to the current volume
-chrome.storage.sync.get("volume", (data) => {
-    document.getElementById("VolumeText").textContent = data.volume;
-});
+document.getElementById("VolumeText").textContent = 100;
 
 // lower the volume by 10
 volumeDown.addEventListener("click", async () => {
@@ -16,6 +16,7 @@ volumeDown.addEventListener("click", async () => {
     changeVolume(-10);
 
 });
+
 
 // raise the volume by 10
 volumeUp.addEventListener("click", async () => {
@@ -27,6 +28,14 @@ mute.addEventListener("click", async () => {
     console.log('muting volume');
     muteVolume();
 });
+
+chrome.runtime.onMessage.addListener(
+    function(request) {
+      if(request.message === "getTabVolume" && typeof request.value === 'number') {
+        console.log("The current tab volume is: " + request.value);
+        document.getElementById("VolumeText").textContent = request.value;
+      }
+    });
 
 function muteVolume()
 {
@@ -45,8 +54,8 @@ function muteVolume()
     }
     else
     {
-        chrome.storage.sync.get("volume", (data) => {
-            volume = data.volume;
+        
+        volume = parseInt(document.getElementById("VolumeText").textContent);
 
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             const activeTab = tabs[0];
@@ -56,7 +65,6 @@ function muteVolume()
             value: volume / 100.0
           });
         });
-    });
     muted = false;
     mute.textContent = "mute";
     }
@@ -66,8 +74,8 @@ function muteVolume()
 // store this volume and tell the content script to change the volume
 function changeVolume(volume)
 {
-    chrome.storage.sync.get("volume", (data) => {
-        volume = data.volume + volume;
+        curVolume = parseInt(document.getElementById("VolumeText").textContent);
+        volume = curVolume + volume;
         if (volume < 0)
         {
             volume = 0;
@@ -76,10 +84,8 @@ function changeVolume(volume)
         {
             volume = 400;
         }
-        chrome.storage.sync.set({volume}, function() {
         console.log("Volume set to: " + volume);
-    });
-    document.getElementById("VolumeText").textContent = volume; 
+        document.getElementById("VolumeText").textContent = volume; 
 
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             const activeTab = tabs[0];
@@ -88,8 +94,12 @@ function changeVolume(volume)
             message: 'set_volume_level',
             value: volume / 100.0
           });
+          console.log("setting tab volume." + volume);
+          chrome.runtime.sendMessage({
+            message: 'setTabVolume',
+            value: volume
+          });
         });
-    });
     muted = false;
     mute.textContent = "mute";
 }
