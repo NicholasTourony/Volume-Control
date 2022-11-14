@@ -1,4 +1,3 @@
-
 let volumeControlFunction = null;
 
 // listener to see if popup.js called for a volume change
@@ -16,9 +15,7 @@ chrome.runtime.onMessage.addListener(
 // adjust the volume
 function setVolume() {
     console.log("looking for video");
-    const video = document.querySelector('video'); // || document.querySelector('audio');
-    //const video = document.getElementsByName('video');
-    //const video = document.getElementById("hls-stream0");
+    const video = document.querySelector('video');
     if (video === null)
     {
       console.log("No video elements found");

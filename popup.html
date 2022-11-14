@@ -4,13 +4,17 @@
         <link rel="stylesheet" href="popup.css">
     </head>
         <body>
+            <div id="heading">
+                <b>Volume Control</b>
+            </div>
             <div id="container">
-            <button id="VolumeUp" class="inside">+</button>
-            <div id="VolumeText" class="inside">100</div>
             <button id="VolumeDown" class="inside">-</button>
+            <div id="VolumeText" class="inside">100</div>
+            <button id="VolumeUp" class="inside">+</button>
             </div>
         </body>
         <body id="muteButton">
+            <input type="range" min="0" max="400" value="100" class="slider" id="myRange">
             <button id="mute">mute</button></button>
             <script src="popup.js"></script>
         </body>

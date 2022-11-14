@@ -3,8 +3,15 @@ chrome.runtime.sendMessage({popupOpen: true});
 let volumeDown = document.getElementById("VolumeDown");
 let volumeUp = document.getElementById("VolumeUp");
 let mute = document.getElementById("mute");
+var slider = document.getElementById("myRange");
 let muted = false;
 
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+    //document.getElementById("VolumeText").textContent = this.value;
+    newVolume = this.value - document.getElementById("VolumeText").textContent;
+    changeVolume(newVolume);
+  }
 
 // set the text of the popup to the current volume
 document.getElementById("VolumeText").textContent = 100;
@@ -33,6 +40,7 @@ chrome.runtime.onMessage.addListener(
       if(request.message === "getTabVolume" && typeof request.value === 'number') {
         console.log("The current tab volume is: " + request.value);
         document.getElementById("VolumeText").textContent = request.value;
+        slider.value = request.value;
       }
     });
 
@@ -86,7 +94,8 @@ function changeVolume(volume)
             volume = 400;
         }
         console.log("Volume set to: " + volume);
-        document.getElementById("VolumeText").textContent = volume; 
+        document.getElementById("VolumeText").textContent = volume;
+        slider.value = volume;
 
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
             const activeTab = tabs[0];

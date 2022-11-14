@@ -1,3 +1,6 @@
+#heading {
+    font-size: 16px;
+}
 #container {
     width: 126px;
     height: 41px;
@@ -12,6 +15,7 @@
 }
 
 .inside {
+    text-align: center;
     display: inline-block;
 }
 
@@ -19,17 +23,24 @@ button {
     width: 30px;
     margin: 10px;
     outline: none;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color:rgb(21, 90, 168);
+    background-color: rgb(230, 230, 230);
 }
 
-/* #VolumeUp {
+button:hover {
     width: 30px;
     margin: 10px;
     outline: none;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color:rgb(21, 90, 168);
+    background-color: lightgray;
 }
 
-#VolumeDown {
-    width: 30px;
-    margin: 10px;
-    outline: none;
-} */
+body {
+    background-color:aliceblue;
+    color:black;
+  }
 
